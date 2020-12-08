@@ -1,13 +1,23 @@
 const express = require('express');
 const app = express();
+const mongoose = require('mongoose');
+require('./models/productmodel');
 const products = require('./routes/products');
 const orders = require('./routes/orders');
 const morgan = require('morgan');
 const bodyparser = require('body-parser');
 
+
 app.use(morgan('dev'));
 app.use(bodyparser.urlencoded({extended: false}));
 app.use(bodyparser.json());
+
+mongoose.connect(process.env.MONGOURI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+})
+.then(() => console.log("connected!"))
+.catch(e => console.log(e))
 
 app.use((req,res,next) => {
     res.header('Access-Control-Allow-Origin', '*');
