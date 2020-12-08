@@ -6,9 +6,24 @@ const productdb = mongoose.model('products');
 
 router.get('/', (req, res, next) => {
     productdb.find()
+    .select("name price id")
     .exec()
     .then(docs => {
-        res.status(200).json(docs);
+        const response = {
+            count: docs.length,
+            products: docs.map(doc => (
+                {
+                    id: doc._id,
+                    name: doc.name,
+                    price: doc.price,
+                    request: {
+                        type: 'GET',
+                        url: "http://localhost:5000/products/"+doc._id
+                    }
+                }
+            ))
+        }
+        res.status(200).json(response);
     })
     .catch(err => {
         console.log(err);
@@ -21,14 +36,30 @@ router.post('/', (req, res, next) => {
         name: req.body.name,
         price: req.body.price
     }
-
-    new productdb(product)
+    productdb.find(product)
+    .then(result => {
+        if(result.length !== 0){
+            return res.status(500).json({
+                error: {
+                    message: "product already exists"
+                }
+            });
+        }
+        new productdb(product)
         .save()
         .then(newproduct => {
             console.log(newproduct)
             res.status(201).json({
                 message: "product posted",
-                createdProduct: newproduct
+                createdProduct: {
+                    id: newproduct._id,
+                    name: newproduct.name,
+                    price: newproduct.price,
+                    request: {
+                        type: "GET",
+                        url: "http://localhost:5000/products/"+newproduct._id
+                    }
+                }
             });
         })
         .catch(err => {
@@ -38,16 +69,25 @@ router.post('/', (req, res, next) => {
         });
     });
 
+    })
+    
 });
 
 router.get('/:productId', (req, res, next) => {
     productdb.findById(req.params.productId)
     .then(product => {
-        console.log(product)
         if(product){
             res.status(200).json({
                 message: "product details",
-                Product: product
+                Product: {
+                    id: product._id,
+                    name: product.name,
+                    price: product.price,
+                    request: {
+                        type: "GET",
+                        url: "http://localhost:5000/products/"
+                    }
+                }
             });
         }
         else{
@@ -76,7 +116,16 @@ router.patch('/:productId', (req, res, next) => {
             res.status(500).json({error: err})
         }
         else{
-            res.status(200).json(result);
+            res.status(200).json({
+                message: "Product successfully updated",
+                Product: {
+                    id,
+                    request: {
+                        type: "GET",
+                        url: "http://localhost:5000/products/"+id
+                    }
+                }
+            });
         }
     });
 });
@@ -89,7 +138,9 @@ router.delete('/:productId', (req, res, next) => {
             res.status(500).json({error: err});
         }
         else{
-            res.status(200).json(result);
+            res.status(200).json({
+                message: "product successfully deleted"
+            });
         }
     });    
 });
