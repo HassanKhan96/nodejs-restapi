@@ -2,6 +2,7 @@ const express = require('express');
 const app = express();
 const mongoose = require('mongoose');
 require('./models/productmodel');
+require('./models/ordermodel');
 const products = require('./routes/products');
 const orders = require('./routes/orders');
 const morgan = require('morgan');
