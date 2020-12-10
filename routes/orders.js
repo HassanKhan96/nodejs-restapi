@@ -64,6 +64,7 @@ router.post('/', (req, res, next) => {
 
 router.get('/:orderId', (req, res, next) => {
     ordersdb.findById(req.params.orderId)
+        .populate("productId", "name")
         .exec()
         .then(order => {
             res.status(201).json({
