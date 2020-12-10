@@ -5,6 +5,7 @@ const ordersdb = mongoose.model('orders');
 
 router.get('/', (req, res, next) => {
     ordersdb.find()
+        .populate("productId", "name")
         .exec()
         .then(docs => {
             res.status(200).json({
