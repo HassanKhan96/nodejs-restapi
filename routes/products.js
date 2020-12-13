@@ -3,10 +3,21 @@ const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
 const productdb = mongoose.model('products');
+const multer = require('multer');
+
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, './uploads/');
+    },
+    filename: (req, file, cb) => {
+        cb(null,  new Date().toISOString() + file.originalname);
+    }
+})
+const uploads = multer({storage: storage})
 
 router.get('/', (req, res, next) => {
     productdb.find()
-    .select("name price id")
+    .select("name price id productImage")
     .exec()
     .then(docs => {
         const response = {
@@ -16,6 +27,7 @@ router.get('/', (req, res, next) => {
                     id: doc._id,
                     name: doc.name,
                     price: doc.price,
+                    productImage: doc.productImage,
                     request: {
                         type: 'GET',
                         url: "http://localhost:5000/products/"+doc._id
@@ -31,10 +43,11 @@ router.get('/', (req, res, next) => {
     });
 });
 
-router.post('/', (req, res, next) => {
+router.post('/', uploads.single('productImage'),(req, res, next) => {
     const product = {
         name: req.body.name,
-        price: req.body.price
+        price: req.body.price,
+        productImage: req.file.path
     }
     productdb.find(product)
     .then(result => {
@@ -55,6 +68,7 @@ router.post('/', (req, res, next) => {
                     id: newproduct._id,
                     name: newproduct.name,
                     price: newproduct.price,
+                    productImage: newproduct.productImage,
                     request: {
                         type: "GET",
                         url: "http://localhost:5000/products/"+newproduct._id
@@ -83,6 +97,7 @@ router.get('/:productId', (req, res, next) => {
                     id: product._id,
                     name: product.name,
                     price: product.price,
+                    productImage: product.productImage,
                     request: {
                         type: "GET",
                         url: "http://localhost:5000/products/"
