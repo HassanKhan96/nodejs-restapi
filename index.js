@@ -3,8 +3,10 @@ const app = express();
 const mongoose = require('mongoose');
 require('./models/productmodel');
 require('./models/ordermodel');
+require('./models/usermodel');
 const products = require('./routes/products');
 const orders = require('./routes/orders');
+const user = require('./routes/user');
 const morgan = require('morgan');
 const bodyparser = require('body-parser');
 
@@ -39,6 +41,7 @@ app.use((req,res,next) => {
 
 app.use('/products', products);
 app.use('/orders', orders);
+app.use('/user', user);
 
 app.use((req,res,next) => {
     const error = new Error('Not Found');
