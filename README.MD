@@ -13,7 +13,7 @@ git clone https://github.com/HassanKhan96/nodejs-restapi.git
 
 Please change process.env variables which contains MONGOURI and JWTKEY or pass your own variables.
 
-### localhost:5000/user'
+### localhost:5000/user
 ```
 POST /user/signup
 #creates a new user.
