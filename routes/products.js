@@ -4,6 +4,7 @@ const router = express.Router();
 const mongoose = require('mongoose');
 const productdb = mongoose.model('products');
 const multer = require('multer');
+const checkAuth = require('../middleware/checkAuth');
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
@@ -43,13 +44,13 @@ router.get('/', (req, res, next) => {
     });
 });
 
-router.post('/', uploads.single('productImage'),(req, res, next) => {
+router.post('/', checkAuth,uploads.single('productImage'),(req, res, next) => {
     const product = {
         name: req.body.name,
         price: req.body.price,
         productImage: req.file.path
     }
-    productdb.find(product)
+    productdb.find({name: product.name, price: product.price})
     .then(result => {
         if(result.length !== 0){
             return res.status(500).json({
@@ -61,7 +62,6 @@ router.post('/', uploads.single('productImage'),(req, res, next) => {
         new productdb(product)
         .save()
         .then(newproduct => {
-            console.log(newproduct)
             res.status(201).json({
                 message: "product posted",
                 createdProduct: {

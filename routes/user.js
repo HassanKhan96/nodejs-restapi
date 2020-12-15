@@ -54,7 +54,6 @@ router.post('/login', (req, res, next) => {
     };
     User.findOne({ email: credentials.email })
         .then(user => {
-            console.log(user);
             if (user === null) {
                 return res.status(404).json({
                     message: "Authorization failed."
