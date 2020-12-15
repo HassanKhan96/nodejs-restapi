@@ -13,7 +13,7 @@ git clone https://github.com/HassanKhan96/nodejs-restapi.git
 
 Please change process.env variables which contains MONGOURI and JWTKEY or pass your own variables.
 
-### https://localhost:5000/user
+### localhost:5000/user'
 ```
 POST /user/signup
 #creates a new user.
@@ -32,7 +32,7 @@ DELETE /user/@someuserid@
 #can apply your custom rules for protecting delete route of user/
 ```
 
-### https://localhost:5000/products
+### /localhost:5000/products
 ```
 GET /products 
 #gives you all the stored products.
@@ -54,7 +54,7 @@ DELETE /products/@someproductid@
 ```
 
 
-### https://localhost:5000/orders
+### /localhost:5000/orders
 ```
 GET /orders 
 #gives you all the stored orders.
